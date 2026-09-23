@@ -1,0 +1,16 @@
+{
+  "name": "site-soma",
+  "version": "1.0.0",
+  "description": "Exercício N390 - Requisições POST com Express (soma, subtração, multiplicação e divisão)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.3.0",
+    "express": "^5.2.1"
+  }
+}
