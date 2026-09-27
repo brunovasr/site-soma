@@ -11,13 +11,13 @@ npm install
 node app.js
 ```
 
-O servidor sobe em `http://localhost:3001`.
+O servidor sobe em `http://localhost:3001`. Abra esse endereço no navegador para usar a calculadora.
 
 ## Rotas
 
 | Método | Rota             | Descrição                    |
 |--------|------------------|------------------------------|
-| GET    | `/`              | Mensagem de boas-vindas      |
+| GET    | `/`              | Front-end da calculadora     |
 | POST   | `/soma`          | Retorna `a + b`              |
 | POST   | `/subtracao`     | Retorna `a - b`              |
 | POST   | `/multiplicacao` | Retorna `a * b`              |
@@ -39,3 +39,25 @@ O servidor sobe em `http://localhost:3001`.
 Resposta esperada: `O resultado da soma de 10 e 5 é 15`
 
 Repita trocando a rota para `/subtracao`, `/multiplicacao` e `/divisao`.
+
+## Front-end
+
+A pasta `public/` é servida pelo Express com `express.static`. A página tem dois campos numéricos e um botão para cada operação. Cada clique faz um `fetch` POST com JSON para a rota correspondente e mostra a resposta do servidor numa fita com o histórico das contas, incluindo os erros (como divisão por zero).
+
+![Front-end da calculadora](docs/prints/front.png)
+
+## Testes no Postman
+
+Requisições feitas com o corpo `{ "a": 10, "b": 5 }`, todas com status `200 OK`.
+
+### Soma
+![POST /soma](docs/prints/soma.png)
+
+### Subtração
+![POST /subtracao](docs/prints/subtracao.png)
+
+### Multiplicação
+![POST /multiplicacao](docs/prints/multiplicacao.png)
+
+### Divisão
+![POST /divisao](docs/prints/divisao.png)

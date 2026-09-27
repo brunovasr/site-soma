@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora — site-soma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --papel: #EEF3F1;
+      --fita: #FFFFFF;
+      --tinta: #1E3148;
+      --tinta-suave: #5B6B7C;
+      --pauta: #C9DAD6;
+      --verde: #2F6F62;
+      --erro: #B42318;
+      --fonte: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--papel);
+      color: var(--tinta);
+      font-family: var(--fonte);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 56px 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* ---------- Painel da calculadora ---------- */
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+    }
+
+    .intro {
+      color: var(--tinta-suave);
+      margin: 0 0 36px;
+      max-width: 38ch;
+    }
+
+    .campo { margin-bottom: 20px; }
+
+    .campo label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .campo input {
+      width: 100%;
+      font: inherit;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--tinta);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--tinta);
+      padding: 4px 0;
+      border-radius: 0;
+    }
+
+    .campo input:focus {
+      outline: none;
+      border-bottom-color: var(--verde);
+      box-shadow: 0 2px 0 var(--verde);
+    }
+
+    .operacoes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .operacoes button {
+      font: inherit;
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1;
+      padding: 18px 0;
+      color: var(--tinta);
+      background: var(--fita);
+      border: 2px solid var(--tinta);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background-color .12s, color .12s, transform .08s;
+    }
+
+    .operacoes button:hover { background: var(--pauta); }
+    .operacoes button:active { transform: translateY(2px); }
+
+    .operacoes button:focus-visible {
+      outline: 3px solid var(--verde);
+      outline-offset: 3px;
+    }
+
+    .operacoes button[disabled] { opacity: .5; cursor: wait; }
+
+    .dica {
+      font-size: .9rem;
+      color: var(--tinta-suave);
+      margin-top: 14px;
+    }
+
+    /* ---------- Fita (histórico) ---------- */
+    .fita {
+      position: relative;
+      background: var(--fita);
+      padding: 28px 28px 20px;
+      min-height: 420px;
+      /* borda serrilhada no topo, como papel destacado da máquina */
+      --dente: 10px;
+      mask:
+        conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--dente) 51% repeat-x,
+        linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--dente) / 2) no-repeat;
+      -webkit-mask:
+        conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--dente) 51% repeat-x,
+        linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--dente) / 2) no-repeat;
+      filter: drop-shadow(0 1px 0 var(--pauta));
+    }
+
+    .fita-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .fita-topo h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .limpar {
+      font: inherit;
+      font-size: .9rem;
+      color: var(--tinta-suave);
+      background: none;
+      border: none;
+      padding: 4px 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .limpar:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
+
+    ol.linhas {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .linha {
+      padding: 14px 0;
+      border-bottom: 1px dashed var(--pauta);
+    }
+
+    .linha .conta {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 1.25rem;
+    }
+
+    .linha .resultado {
+      font-size: 1.75rem;
+      font-weight: 800;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .linha .resposta {
+      font-size: .85rem;
+      color: var(--tinta-suave);
+      margin-top: 2px;
+    }
+
+    .linha.erro .resultado,
+    .linha.erro .resposta { color: var(--erro); }
+
+    .linha.nova { animation: imprime .35s ease-out; }
+
+    @keyframes imprime {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .vazia {
+      color: var(--tinta-suave);
+      padding: 24px 0;
+    }
+
+    @media (max-width: 760px) {
+      main { grid-template-columns: 1fr; padding: 32px 18px; gap: 36px; }
+      h1 { font-size: 2.25rem; }
+      .fita { min-height: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .linha.nova { animation: none; }
+      .operacoes button { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section aria-labelledby="titulo">
+      <h1 id="titulo">Calculadora</h1>
+      <p class="intro">Digite dois números e escolha a operação. Cada conta é enviada ao servidor Express por uma requisição POST.</p>
+
+      <div class="campo">
+        <label for="a">Primeiro número</label>
+        <input id="a" type="number" step="any" inputmode="decimal" value="10">
+      </div>
+
+      <div class="campo">
+        <label for="b">Segundo número</label>
+        <input id="b" type="number" step="any" inputmode="decimal" value="5">
+      </div>
+
+      <div class="operacoes" role="group" aria-label="Operações">
+        <button type="button" data-rota="soma" data-simbolo="+" aria-label="Somar">+</button>
+        <button type="button" data-rota="subtracao" data-simbolo="−" aria-label="Subtrair">−</button>
+        <button type="button" data-rota="multiplicacao" data-simbolo="×" aria-label="Multiplicar">×</button>
+        <button type="button" data-rota="divisao" data-simbolo="÷" aria-label="Dividir">÷</button>
+      </div>
+      <p class="dica">Enter faz a soma.</p>
+    </section>
+
+    <section class="fita" aria-labelledby="titulo-fita">
+      <div class="fita-topo">
+        <h2 id="titulo-fita">Contas feitas</h2>
+        <button type="button" class="limpar" id="limpar">Limpar</button>
+      </div>
+      <ol class="linhas" id="linhas" aria-live="polite"></ol>
+      <p class="vazia" id="vazia">As contas que você fizer aparecem aqui, da mais recente para a mais antiga.</p>
+    </section>
+  </main>
+
+  <script>
+    var campoA = document.getElementById('a');
+    var campoB = document.getElementById('b');
+    var linhas = document.getElementById('linhas');
+    var vazia = document.getElementById('vazia');
+    var botoes = document.querySelectorAll('.operacoes button');
+
+    // Envia os dois números para a rota escolhida usando POST com corpo JSON
+    async function calcular(botao) {
+      var rota = botao.dataset.rota;
+      var simbolo = botao.dataset.simbolo;
+      var a = campoA.value;
+      var b = campoB.value;
+
+      botoes.forEach(function (bt) { bt.disabled = true; });
+
+      try {
+        var resposta = await fetch('/' + rota, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ a: a === '' ? undefined : Number(a), b: b === '' ? undefined : Number(b) })
+        });
+        var texto = await resposta.text();
+
+        // A resposta do servidor termina com "é <resultado>"
+        var achou = texto.match(/é\s+(-?[\d.e+-]+|Infinity|NaN)\s*$/);
+        var resultado = resposta.ok && achou ? formatar(achou[1]) : 'Erro';
+
+        adicionarLinha({
+          conta: (a || '?') + ' ' + simbolo + ' ' + (b || '?'),
+          resultado: resposta.ok ? '= ' + resultado : resultado,
+          detalhe: 'POST /' + rota + ' (' + resposta.status + '): ' + texto,
+          erro: !resposta.ok
+        });
+      } catch (e) {
+        adicionarLinha({
+          conta: (a || '?') + ' ' + simbolo + ' ' + (b || '?'),
+          resultado: 'Sem conexão',
+          detalhe: 'O servidor não respondeu. Confira se o node app.js está rodando.',
+          erro: true
+        });
+      } finally {
+        botoes.forEach(function (bt) { bt.disabled = false; });
+      }
+    }
+
+    function formatar(valor) {
+      var n = Number(valor);
+      if (!isFinite(n)) return valor;
+      return n.toLocaleString('pt-BR', { maximumFractionDigits: 6 });
+    }
+
+    function adicionarLinha(dados) {
+      var li = document.createElement('li');
+      li.className = 'linha nova' + (dados.erro ? ' erro' : '');
+
+      var conta = document.createElement('div');
+      conta.className = 'conta';
+
+      var expressao = document.createElement('span');
+      expressao.textContent = dados.conta;
+
+      var resultado = document.createElement('span');
+      resultado.className = 'resultado';
+      resultado.textContent = dados.resultado;
+
+      var detalhe = document.createElement('div');
+      detalhe.className = 'resposta';
+      detalhe.textContent = dados.detalhe;
+
+      conta.appendChild(expressao);
+      conta.appendChild(resultado);
+      li.appendChild(conta);
+      li.appendChild(detalhe);
+
+      linhas.prepend(li);
+      vazia.hidden = true;
+    }
+
+    botoes.forEach(function (botao) {
+      botao.addEventListener('click', function () { calcular(botao); });
+    });
+
+    [campoA, campoB].forEach(function (campo) {
+      campo.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') calcular(botoes[0]);
+      });
+    });
+
+    document.getElementById('limpar').addEventListener('click', function () {
+      linhas.innerHTML = '';
+      vazia.hidden = false;
+    });
+  </script>
+</body>
+</html>

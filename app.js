@@ -5,6 +5,9 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
+// Serve os arquivos da pasta "public" (o front-end da calculadora em /)
+app.use(express.static('public'));
+
 // ---------- Funções das operações ----------
 function soma(a, b) {
   return a + b;
@@ -36,10 +39,6 @@ function lerNumeros(body) {
 }
 
 // ---------- Rotas ----------
-app.get('/', function (req, res) {
-  res.send('Oi, mundo :-)');
-});
-
 app.post('/soma', function (req, res) {
   var body = req.body;
   console.log(body);
