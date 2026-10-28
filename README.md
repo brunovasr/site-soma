@@ -11,13 +11,14 @@ npm install
 node app.js
 ```
 
-O servidor sobe em `http://localhost:3001`. Abra esse endereço no navegador para usar a calculadora.
+O servidor sobe em `http://localhost:3001`. A raiz responde `Oi, mundo :-)` e a calculadora fica em `http://localhost:3001/calculadora`.
 
 ## Rotas
 
 | Método | Rota             | Descrição                    |
 |--------|------------------|------------------------------|
-| GET    | `/`              | Front-end da calculadora     |
+| GET    | `/`              | Responde `Oi, mundo :-)`     |
+| GET    | `/calculadora`   | Front-end da calculadora     |
 | POST   | `/soma`          | Retorna `a + b`              |
 | POST   | `/subtracao`     | Retorna `a - b`              |
 | POST   | `/multiplicacao` | Retorna `a * b`              |
@@ -42,7 +43,7 @@ Repita trocando a rota para `/subtracao`, `/multiplicacao` e `/divisao`.
 
 ## Front-end
 
-A pasta `public/` é servida pelo Express com `express.static`. A página tem dois campos numéricos e um botão para cada operação. Cada clique faz um `fetch` POST com JSON para a rota correspondente e mostra a resposta do servidor numa fita com o histórico das contas, incluindo os erros (como divisão por zero).
+A pasta `public/` é servida pelo Express com `express.static` na rota `/calculadora`. A página tem dois campos numéricos e um botão para cada operação. Cada clique faz um `fetch` POST com JSON para a rota correspondente e mostra a resposta do servidor numa fita com o histórico das contas, incluindo os erros (como divisão por zero).
 
 ![Front-end da calculadora](docs/prints/front.png)
 

@@ -5,8 +5,13 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-// Serve os arquivos da pasta "public" (o front-end da calculadora em /)
-app.use(express.static('public'));
+// Rota GET da raiz, conforme o tutorial
+app.get('/', function (req, res) {
+  res.send('Oi, mundo :-)');
+});
+
+// Serve os arquivos da pasta "public" (o front-end da calculadora em /calculadora)
+app.use('/calculadora', express.static('public'));
 
 // ---------- Funções das operações ----------
 function soma(a, b) {
